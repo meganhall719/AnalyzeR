@@ -1,0 +1,135 @@
+---
+title: "Image Analyzes vignette"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Image Analyzes vignette}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(AnalyzeR)
+library(magick)
+library(tiff)
+```
+
+# Introduction
+
+This vignette demonstrates how to use the image analysis package to process and analyze images. The package provides functions for thresholding, grouping, and batch processing of images. \# Loading the Package First, load the package:
+
+```{r}
+library(AnalyzeR) 
+library(magick) # For loading test images
+```
+
+# Example Images
+
+For this demonstration, we'll use the cerebellum images included with the package:
+
+```{r}
+
+# In your vignette
+library(AnalyzeR)
+library(magick)
+
+#  direct URLs to the raw GitHub files
+img1 <- image_read("https://raw.githubusercontent.com/kathrynnrhodes/CollaborativeProject/main/F_FXR_3_cerebellum_40x_1.tif")
+img2 <- image_read("https://raw.githubusercontent.com/kathrynnrhodes/CollaborativeProject/main/F_FXR_3_cerebellum_40x_2.tif")
+img3 <- image_read("https://raw.githubusercontent.com/kathrynnrhodes/CollaborativeProject/main/F_FXR_3_cerebellum_40x_3.tif")
+
+#  proceed with your analysis
+analysis_result <- analyze_image(img1, threshold = "60%")
+# View the analysis results
+print(analysis_result$formatted)
+print(paste("Image dimensions:", analysis_result$width, "x", analysis_result$height))
+# Display the processed image
+analysis_result$processed_image
+
+
+```
+
+# Basic Image Analysis
+
+let's analyze a single image with our 'analyze_image' function:
+
+# Batch Processing
+
+Now, let's demonstrate how to process multiple cerebellum images using the package's batch capabilities:
+
+```{r}
+# Group the cerebellum images
+image_list <- list(img1, img2, img3)
+grouped_images <- group_loaded_images(image_list, process_loaded_images)
+
+# Display information about the grouped images
+print(paste("Number of images in group:", grouped_images$count))
+
+# Print basic info about each image
+for (i in 1:length(image_list)) {
+  info <- magick::image_info(image_list[[i]])
+  cat(sprintf("Image %d: %d x %d pixels\n", i, info$width, info$height))
+}
+```
+
+# Batch Analysis
+
+Now we can analyze all the images in the group at once:
+
+```{r}
+# Analyze all images with the same threshold
+batch_results <- batch_analyze_images(grouped_images, threshold = "65%")
+
+# View the summary results
+cat(batch_results$summary)
+
+# You can also access individual results
+print(batch_results$individual_results[[1]]$formatted)
+print(batch_results$individual_results[[2]]$formatted)
+print(batch_results$individual_results[[3]]$formatted)
+
+```
+
+# Visualizing Results
+
+Let's create a simple plot to visualize the analysis results:
+
+```{r}
+# Extract percentage values for plotting
+percentages <- sapply(batch_results$individual_results, function(x) x$percentage)
+image_names <- sapply(batch_results$individual_results, function(x) x$image_name)
+
+# Create a bar plot
+barplot(percentages, names.arg = image_names, 
+        main = "Percentage Differences by Image",
+        xlab = "Image", ylab = "Percentage (%)",
+        col = "skyblue")
+abline(h = batch_results$average_percentage, col = "red", lwd = 2)
+legend("topright", legend = c("Individual Images", "Average"),
+       fill = c("skyblue", "red"))
+
+
+```
+
+# Advanced Usage
+
+```{r}
+# Example of customizing thresholds for different image types
+light_image_analysis <- analyze_image(img1, threshold = "40%")
+dark_image_analysis <- analyze_image(img2, threshold = "80%")
+
+# Compare results
+cat("Light image threshold (40%):", light_image_analysis$formatted, "\n")
+cat("Dark image threshold (80%):", dark_image_analysis$formatted, "\n")
+
+```
+
+# Conclusion
+
+This vignette has demonstrated how to use the main functions of the image analysis package for analyzing both individual images and batches of images. By adjusting thresholds and processing parameters, you can customize the analysis for different types of images and research needs.
