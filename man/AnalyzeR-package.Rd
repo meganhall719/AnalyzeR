@@ -4,7 +4,7 @@
 \name{AnalyzeR-package}
 \alias{AnalyzeR}
 \alias{AnalyzeR-package}
-\title{AnalyzeR: Image analyses Package}
+\title{AnalyzeR: Image Analyzsis Package}
 \description{
 A package for analyzing and quantifying staining in images. The functions provide a workflow for image analysis 'analyze_image()' processes a single image with a customizable threshold, 'group_loaded_images()' organizes images for batch processing, and 'batch_analyze_images()' analyzes all grouped images using the same threshold. The package calculates the percentage difference between stained and blank images, providing a quantitative measure of protein expression and summary statistics across image batches.
 }

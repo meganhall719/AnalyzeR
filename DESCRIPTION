@@ -1,5 +1,5 @@
 Package: AnalyzeR
-Title: Image analyses Package
+Title: Image Analyzsis Package
 Version: 0.0.0.9000
 Authors@R: c(
     person("Megan", "Hall", email = "megan.hall@utexas.edu", role = "cre"),
